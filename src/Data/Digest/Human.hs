@@ -1,27 +1,32 @@
 module Data.Digest.Human where
 
-import           Data.Bits.Extras                (log2, w32)
 import           Data.Foldable
 import           Data.Hashable
 import qualified Data.Text                  as T
 import           Data.Text                       (Text)
 import           Data.Digest.Human.WordList
 
-humanHashChunksWith :: (Foldable t, Hashable a) => (Int -> b) -> Int -> t a -> [b]
-humanHashChunksWith f c = humanHash' . toList
+-- | Split the input 't a' into 'c' chunks of like size, and for each
+-- chunk, hash and apply 'f'. Return the collected results.
+--
+-- Example:
+--
+-- > let words = ["foo", "bar"] in humanHashBy ((words !!).(`mod` 2)) 2 "test"
+-- ["bar", "bar"]
+--
+humanHashBy :: (Foldable t, Hashable a) => (Int -> b) -> Int -> t a -> [b]
+humanHashBy f c = humanHash' . toList
   where
     humanHash' s = go (length s) s
     go k s       = 
-        case splitAt c s of
+        case splitAt (k `quot` c) s of
             ([],b) -> []
             (a,b)  -> (f . hash) a : go k b
 
-humanHash :: (Foldable t, Hashable a) => t a -> [Text]
-humanHash = humanHashChunksWith f c
+-- | Build a human hash of length 'c' from the input 't a' using the included word list.
+humanHash :: (Foldable t, Hashable a) => Int -> t a -> [Text]
+humanHash = humanHashBy f
   where
-    wl  = wordListShort
-    f   = (wl !!) . (flip mod dim)
-    dim = length wl
-    c   = case log2 $ w32 dim of
-            n | dim < 2^n -> n
-              | otherwise -> n + 1
+    wl = wordListShort
+    e  = length wl
+    f  = (wl !!) . (flip mod e)
