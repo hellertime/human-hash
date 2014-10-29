@@ -25,7 +25,8 @@ library
                         bit-vector >=0.1,
                         matrices >=0.1,
                         vector >=0.10,
-                        normaldistribution >=1.1
+                        normaldistribution >=1.1,
+                        hashable >=1.2
 
     exposed-modules:
         Data.Digest.Human

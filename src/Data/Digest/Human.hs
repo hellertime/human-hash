@@ -12,9 +12,9 @@ import qualified Data.Vector.Bit        as BV
 import qualified Data.Vector.Unboxed    as V
 import           Data.Word
 
+import           Data.Digest.Human.More
 import           Data.Digest.Human.WordList
 
-import Debug.Trace
 -- | Build MxN normal matrix, transposed to make it simpler to multiply by a 1xM row vector
 type Matrix a = [V.Vector a]
 type Rows = Int
