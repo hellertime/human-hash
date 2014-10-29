@@ -3,23 +3,25 @@ module Data.Digest.Human.More where
 import           Data.Bits.Extras                (log2, w32)
 import           Data.Foldable
 import           Data.Hashable
+import           Data.Monoid
 import qualified Data.Text                  as T
 import           Data.Text                       (Text)
 import           Data.Digest.Human.WordList
 
-humanHashWith :: (Foldable t, Hashable a) => (Int -> Text) -> t a -> [Text]
-humanHashWith f = humanHash' . toList
+humanHashChunksWith :: (Foldable t, Hashable a) => (Int -> b) -> Int -> t a -> [b]
+humanHashChunksWith f c = humanHash' . toList
   where
     humanHash' s = go (length s) s
-    go k s       = go' (chunkBy k) k s
-    chunkBy k    = 
-        case log2 $ w32 k of
-            n | k < 2^n   -> n
-              | otherwise -> n + 1
-    go' c k s    =
+    go k s       = 
         case splitAt c s of
             ([],b) -> []
-            (a,b)  -> (f . (flip mod k) . hash) a : go' c k b
+            (a,b)  -> (f . hash) a : go k b
 
 humanHash :: (Foldable t, Hashable a) => t a -> [Text]
-humanHash = humanHashWith (wordList !!)
+humanHash = humanHashChunksWith f c
+  where
+    f   = (wordList !!) . (flip mod dim)
+    dim = length wordList
+    c   = case log2 $ w32 dim of
+            n | dim < 2^n -> n
+              | otherwise -> n + 1
