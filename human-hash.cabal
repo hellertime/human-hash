@@ -21,6 +21,6 @@ library
     exposed-modules:
         Data.Digest.Human
 
-source-repositoy head
+source-repository head
     type:       git
     location:   https://github.com/hellertime/human-hash.git
