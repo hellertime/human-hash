@@ -1,5 +1,5 @@
 {-# LANGUAGE OverloadedStrings #-}
-module Data.Digest.Human where
+module Data.Digest.Human where (humanHash)
 
 import           Data.Foldable
 import           Data.Hashable
@@ -8,8 +8,6 @@ import           Data.Text                       (Text)
 import           System.Random
 
 import           Data.Digest.Human.WordList
-
-import Debug.Trace
 
 -- | Split the input 't a' into 'c' chunks of like size, and for each
 -- chunk, hash and apply 'f'. Return the collected results.
