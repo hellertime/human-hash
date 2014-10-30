@@ -33,6 +33,8 @@ humanHash :: (Foldable t, Hashable a) => Int -> t a -> [Text]
 humanHash c = fixup . humanHashBy (bsAtron posNegGuide c) c
   where
     posNegGuide = take c $ randoms $ mkStdGen c
+    fixup []             = []
+    fixup h@(_:[])       = h
     fixup (h:hs)
         | c `mod` 2 == 0 = (h:hs)
         | otherwise      = h : (last hs) : init hs
