@@ -23,10 +23,11 @@ humanHashBy f c = humanHash' . toList
     humanHash' s = go 0 (length s) s
     go i k s     = 
         case splitAt (k `quot` c) s of
-            ([],_) -> []
-            (a,b)  -> if length b < c
-                          then (f i . hash) (a ++ b) : []
-                          else (f i . hash) a : go (i + 1) k b
+            ([],[]) -> []
+            ([],b)  -> (f i . hash) b : []
+            (a,b)   -> if length b < c
+                           then (f i . hash) (a ++ b) : []
+                           else (f i . hash) a : go (i + 1) k b
 
 -- | Build a human hash of length 'c' from the input 't a' using the included word list.
 humanHash :: (Foldable t, Hashable a) => Int -> t a -> [Text]
@@ -35,8 +36,8 @@ humanHash c = fixup . humanHashBy (bsAtron posNegGuide c) c
     posNegGuide = take c $ randoms $ mkStdGen c
     fixup []             = []
     fixup h@(_:[])       = h
-    fixup (h:hs)
-        | c `mod` 2 == 0 = (h:hs)
+    fixup hhs@(h:hs)
+        | c `mod` 2 == 0 = hhs
         | otherwise      = h : (last hs) : init hs
 
 -- | Generate human hash bullshit
