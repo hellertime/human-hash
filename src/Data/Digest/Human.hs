@@ -1,5 +1,5 @@
 {-# LANGUAGE OverloadedStrings #-}
-module Data.Digest.Human where (humanHash)
+module Data.Digest.Human (humanHash) where
 
 import           Data.Foldable
 import           Data.Hashable
@@ -14,7 +14,7 @@ import           Data.Digest.Human.WordList
 --
 -- Example:
 --
--- > let words = ["foo", "bar"] in humanHashBy ((words !!).(`mod` 2)) 2 "test"
+-- > let words = ["foo", "bar"] in humanHashBy (\i -> (words !!).(`mod` 2)) 2 "test"
 -- ["bar", "bar"]
 --
 humanHashBy :: (Foldable t, Hashable a) => (Int -> Int -> b) -> Int -> t a -> [b]
