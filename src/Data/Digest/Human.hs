@@ -18,12 +18,13 @@ import           Data.Digest.Human.WordList
 -- ["bar", "bar"]
 --
 humanHashBy :: (Foldable t, Hashable a) => (Int -> Int -> b) -> Int -> t a -> [b]
+humanHashBy _ 0 = const []
 humanHashBy f c = humanHash' . toList
   where
     humanHash' s = go 0 (length s) s
+    go i k []    = []
     go i k s     = 
         case splitAt (k `quot` c) s of
-            ([],[]) -> []
             ([],b)  -> (f i . hash) b : []
             (a,b)   -> if length b < c
                            then (f i . hash) (a ++ b) : []
