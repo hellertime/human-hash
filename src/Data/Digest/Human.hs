@@ -44,7 +44,7 @@ humanHash c = fixup . humanHashBy (bsAtron posNegGuide c) c
 -- | Generate human hash bullshit
 bsAtron :: [Int] -> Int -> Int -> Int -> Text
 bsAtron rs c i
-    | last           = f states
+    | last           = f places
     | i `mod` 2 /= 0 = f nouns
     | r `mod` 2 == 0 = f positive
     | r `mod` 2 /= 0 = f negative
