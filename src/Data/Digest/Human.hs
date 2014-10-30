@@ -40,15 +40,11 @@ humanHash c = fixup . humanHashBy (bsAtron posNegGuide c) c
 -- | Generate human hash bullshit
 bsAtron :: [Int] -> Int -> Int -> Int -> Text
 bsAtron rs c i
-    | last           = f states stL
-    | i `mod` 2 /= 0 = f nouns nL
-    | r `mod` 2 == 0 = f positive posL
-    | r `mod` 2 /= 0 = f negative negL
+    | last           = f states
+    | i `mod` 2 /= 0 = f nouns
+    | r `mod` 2 == 0 = f positive
+    | r `mod` 2 /= 0 = f negative
   where
-    last  = c `mod` 2 /= 0 && (i + 1) == c
-    r     = rs !! i
-    f w l = (w !!) . (flip mod l)
-    stL   = length states
-    negL  = length negative
-    posL  = length positive
-    nL    = length nouns
+    last = c `mod` 2 /= 0 && (i + 1) == c
+    r    = rs !! i
+    f w  = (w !!) . (flip mod (length w))
