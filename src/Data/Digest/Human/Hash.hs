@@ -1,7 +1,40 @@
-module Data.Digest.Human.Hash (humanHashBy) where
+module Data.Digest.Human.Hash (humanHashBy, hashMod) where
 
 import           Data.Foldable
 import           Data.Hashable
+import 		 Data.List 	      (genericIndex)
+import 		 Data.Vector   	      (Vector, (!))
+import           Data.Sequence        (Seq)
+import qualified Data.Sequence 	 as S
+import           Data.Set             (Set, elemAt)
+import 		 GHC.Exts             (IsList)
+import qualified GHC.Exts        as G
+
+-- | The class of indexable things.
+class Indexable t where
+  index      :: (Integral b) => t a -> b -> a
+  indexByInt :: t a -> Int -> a
+
+  -- ^ Most implemented indexable things tend to take an Int
+  --   so default to providing a way to define an 'Indexable'
+  --   via this 'Int' based index operation.
+  index = flip $ flip indexByInt . fromIntegral
+
+instance Indexable [] where
+  index      = genericIndex
+  indexByInt = (!!)
+
+instance Indexable Vector where
+  indexByInt = (!)
+
+instance Indexable Seq where
+  indexByInt = S.index
+
+instance Indexable Set where
+  indexByInt = flip elemAt
+
+hashMod :: (Integral a, Hashable b) => a -> b -> [a]
+hashMod r h = (flip mod r . fromIntegral . hash . (,) h) `fmap` [hash h..]
 
 -- | Split the input 't a' into 'c' chunks of like size, and for each
 -- chunk, hash and apply 'f'. Return the collected results.
